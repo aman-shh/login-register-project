@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleupload.css') }}">
+</head>
+<body>
+    <div class="box">
+
+        <div class="box_header">
+            <h1>Upload Files</h1>
+            <h3><ul><li>Select category and upload your file</li></ul></h3>
+        </div>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <ol>
+                <div class="category">
+                    <li>
+                        <label for="fileCategory">Choose Category</label>
+                        <select id="fileCategory" name="fileCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="txt">Txt</option>
+                            <option value="document">Documents</option>
+                            <option value="image">Images</option>
+                            <option value="video">Videos</option>
+                            <option value="zip">Compressed</option>
+                        </select>
+                    </li>
+                </div><br>
+
+                <div class="upload">
+                    <li>
+                        <label for="fileUpload">Choose File</label>
+                        <input type="file" id="fileUpload" name="fileUpload" required>
+                    </li>
+                </div><br>
+            </ol>
+
+            <button type="submit" class="button">Submit</button>
+        </form>
+
+        <div style="text-align:center; margin-top:15px;">
+            <a href="/home">← Back to Home</a>
+        </div>
+
+    </div>
+</body>
+</html>

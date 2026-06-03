@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylelogin.css') }}">
+</head>
+<body>
+    <div class="box">
+
+        <div class="box_header">
+            <h1>Welcome Back!</h1>
+            <h3>Login to your account.</h3>
+        </div>
+
+        <!-- Flash messages (wrong password, logged out, etc.) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/" method="POST" id="Login_Form">
+            <ol>
+                <div class="Email">
+                    <li>
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email"
+                               placeholder="you@example.com" required autocomplete="email">
+                    </li>
+                </div><br>
+
+                <div class="password">
+                    <li>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password"
+                               placeholder="Enter your password" required>
+                    </li>
+                </div><br>
+            </ol>
+
+            <button type="submit" class="button">Sign In</button>
+        </form>
+
+        <div class="box_footer">
+            <p>Don't have an account? <a href="/register">Register here</a></p>
+        </div>
+
+    </div>
+</body>
+</html>

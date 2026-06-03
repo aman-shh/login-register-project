@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleregister.css') }}">
+</head>
+<body>
+
+    <div class="box">
+
+        <div class="box_header">
+            <h1>Create Account</h1>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST" enctype="multipart/form-data" id="registerForm">
+
+            <ol>
+
+                <div class="profile_pic">
+                    <li>
+                        <label for="profile_pic">Profile Picture</label>
+
+                        <input type="file"
+                               id="profile_pic"
+                               name="profile_pic"
+                               accept="image/*">
+
+                        <img id="preview"
+                             src=""
+                             alt="Profile Preview"
+                             style="display:none;
+                                    width:120px;
+                                    height:120px;
+                                    border-radius:50%;
+                                    object-fit:cover;
+                                    margin-top:10px;
+                                    border:2px solid #ccc;">
+                    </li>
+                </div>
+                <br>
+
+                <div class="name">
+                    <li>
+                        <label for="name">Full Name</label>
+
+                        <input type="text"
+                               id="name"
+                               name="name"
+                               placeholder="Your name"
+                               required>
+                    </li>
+                </div>
+                <br>
+
+                <div class="mail">
+                    <li>
+                        <label for="email">Email Address</label>
+
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               placeholder="you@example.com"
+                               required>
+                    </li>
+                </div>
+                <br>
+
+                <div class="phone">
+                    <li>
+                        <label for="phone">Phone Number</label>
+
+                        <input type="tel"
+                               id="phone"
+                               name="phone"
+                               placeholder="+91 00000 00000"
+                               required>
+                    </li>
+                </div>
+                <br>
+
+                <div class="blood">
+                    <li>
+                        <label for="blood_group">Blood Group</label>
+
+                        <select id="blood_group"
+                                name="blood_group"
+                                required>
+
+                            <option value="" disabled selected>
+                                Select blood group
+                            </option>
+
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+
+                        </select>
+                    </li>
+                </div>
+                <br>
+
+                <div class="password">
+                    <li>
+                        <label for="password">Password</label>
+
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               placeholder="Minimum 8 characters"
+                               minlength="8"
+                               required>
+                    </li>
+                </div>
+                <br>
+
+                <div class="confirm">
+                    <li>
+                        <label for="confirm_password">
+                            Confirm Password
+                        </label>
+
+                        <input type="password"
+                               id="confirm_password"
+                               name="confirm_password"
+                               placeholder="Confirm your password"
+                               required>
+                    </li>
+                </div>
+                <br>
+
+                <p id="passwordError"
+                   class="error"
+                   style="display:none;">
+                    ⚠ Passwords do not match.
+                </p>
+
+            </ol>
+
+            <button type="submit" class="button">
+                Create Account
+            </button>
+
+        </form>
+
+        <div class="box_footer">
+            <p>
+                Already have an account?
+                <a href="/">Sign in here</a>
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+
+        document.getElementById("registerForm")
+        .addEventListener("submit", function(e) {
+
+            const pw =
+            document.getElementById("password").value;
+
+            const cpw =
+            document.getElementById("confirm_password").value;
+
+            const err =
+            document.getElementById("passwordError");
+
+            if (pw !== cpw) {
+                e.preventDefault();
+                err.style.display = "block";
+            } else {
+                err.style.display = "none";
+            }
+
+        });
+
+        const profileInput =
+        document.getElementById("profile_pic");
+
+        const preview =
+        document.getElementById("preview");
+
+        profileInput.addEventListener("change", function() {
+
+            const file = this.files[0];
+
+            if (file) {
+
+                preview.src =
+                URL.createObjectURL(file);
+
+                preview.style.display =
+                "block";
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylehome.css') }}">
+</head>
+<body>
+    <nav class="navibar">
+
+        <h1 class="logo">Home</h1>
+
+        <div class="navlinks">
+            <a href="/upload">Upload File</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="box">
+
+        <div class="header">
+            <h1>Uploaded Files</h1>
+            <p>All uploaded Files will show up here </p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>File Name</th>
+                    <th>File Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in files %}
+                <tr>
+                    <td>{{ file['user_id'] }}</td>
+                    <td>{{ file['username'] }}</td>
+                    <td>{{ file['file_name'] }}</td>
+                    <td>{{ file['file_type'] }}</td>
+                    <td><a href="#" class="delete_btn">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>
