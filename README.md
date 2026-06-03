@@ -1,4 +1,4 @@
-# Login Register Project
+# Login-Register Project
 
 A simple Flask-based Login and Registration system built using Flask, HTML, and CSS.
 
