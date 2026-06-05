@@ -339,6 +339,91 @@ def upload():
 
     return render_template('upload.html')
 
+
+# ── ADDED: Folder upload route ────────────────────────────────────────────────
+@app.route('/upload_folder', methods=['POST'])
+def upload_folder():
+
+    if 'user_id' not in session:
+        flash("Please login first.", 'error')
+        return redirect(url_for('login'))
+
+    category = request.form.get('fileCategory', '')
+    files = request.files.getlist('fileUpload[]')
+
+    if not files or all(f.filename == '' for f in files):
+        flash("No folder selected.", 'error')
+        return redirect(url_for('upload'))
+
+    uploaded_count = 0
+    skipped_count = 0
+    conn = get_db()
+
+    for file in files:
+        if file.filename == '':
+            continue
+        if not allowed_file(file.filename):
+            skipped_count += 1
+            continue
+
+        safe_name = secure_filename(file.filename.replace('/', '_').replace('\\', '_'))
+        file_ext = safe_name.rsplit('.', 1)[1].lower() if '.' in safe_name else 'unknown'
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], safe_name)
+        file.save(save_path)
+
+        conn.execute('''
+            INSERT INTO files (user_id, username, file_name, file_type, category)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (session['user_id'], session['user_name'], safe_name, file_ext, category))
+
+        uploaded_count += 1
+
+    conn.commit()
+    conn.close()
+
+    log_activity(session['user_id'], session['user_email'], 'folder_upload', 'success')
+
+    msg = f"{uploaded_count} file(s) uploaded successfully!"
+    if skipped_count:
+        msg += f" ({skipped_count} skipped — file type not allowed)"
+    flash(msg, 'success')
+    return redirect(url_for('home'))
+
+
+# ── ADDED: Delete route ───────────────────────────────────────────────────────
+@app.route('/delete/<int:file_id>', methods=['POST'])
+def delete_file(file_id):
+
+    if 'user_id' not in session:
+        flash("Please login first.", 'error')
+        return redirect(url_for('login'))
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        'SELECT * FROM files WHERE id = ? AND user_id = ?',
+        (file_id, session['user_id'])
+    )
+    file_record = cursor.fetchone()
+
+    if not file_record:
+        conn.close()
+        flash("File not found or you don't have permission to delete it.", 'error')
+        return redirect(url_for('home'))
+
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file_record['file_name'])
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    conn.execute('DELETE FROM files WHERE id = ?', (file_id,))
+    conn.commit()
+    conn.close()
+
+    log_activity(session['user_id'], session['user_email'], 'delete', 'success')
+    flash(f"{file_record['file_name']} deleted successfully!", 'success')
+    return redirect(url_for('home'))
+
+
 @app.route('/logout')
 def logout():
 

@@ -11,7 +11,7 @@
 
         <div class="box_header">
             <h1>Upload Files</h1>
-            <h3><ul><li>Select category and upload your file</li></ul></h3>
+            <h3><ul><li>Select category and upload your file or folder</li></ul></h3>
         </div>
 
         <!-- Flash messages -->
@@ -23,7 +23,18 @@
             {% endif %}
         {% endwith %}
 
-        <form action="/upload" method="POST" enctype="multipart/form-data">
+        <!-- Toggle -->
+        <div style="text-align:center; margin-bottom:14px;">
+            <label style="margin-right:20px; cursor:pointer;">
+                <input type="radio" name="uploadMode" value="file" checked onchange="toggleMode('file')"> Single File
+            </label>
+            <label style="cursor:pointer;">
+                <input type="radio" name="uploadMode" value="folder" onchange="toggleMode('folder')"> Entire Folder
+            </label>
+        </div>
+
+        <!-- ── Single file form ── -->
+        <form id="fileForm" action="/upload" method="POST" enctype="multipart/form-data">
             <ol>
                 <div class="category">
                     <li>
@@ -38,7 +49,6 @@
                         </select>
                     </li>
                 </div><br>
-
                 <div class="upload">
                     <li>
                         <label for="fileUpload">Choose File</label>
@@ -46,7 +56,40 @@
                     </li>
                 </div><br>
             </ol>
+            <button type="submit" class="button">Submit</button>
+        </form>
 
+        <!-- ── Folder form ── -->
+        <!--
+            webkitdirectory: browser shows a "Select Folder" dialog instead of
+            "Select File", so the user picks the folder itself — not its contents.
+            All files inside are sent as multiple inputs named fileUpload[].
+        -->
+        <form id="folderForm" action="/upload_folder" method="POST"
+              enctype="multipart/form-data" style="display:none;">
+            <ol>
+                <div class="category">
+                    <li>
+                        <label for="folderCategory">Choose Category</label>
+                        <select id="folderCategory" name="fileCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="txt">Txt</option>
+                            <option value="document">Documents</option>
+                            <option value="image">Images</option>
+                            <option value="video">Videos</option>
+                            <option value="zip">Compressed</option>
+                        </select>
+                    </li>
+                </div><br>
+                <div class="upload">
+                    <li>
+                        <label for="folderUpload">Choose Folder</label>
+                        <input type="file" id="folderUpload" name="fileUpload[]"
+                               webkitdirectory multiple required>
+                        <p id="folderName" style="margin:6px 0 0 0; font-size:0.9em; color:#555;"></p>
+                    </li>
+                </div><br>
+            </ol>
             <button type="submit" class="button">Submit</button>
         </form>
 
@@ -55,5 +98,22 @@
         </div>
 
     </div>
+
+    <script>
+        function toggleMode(mode) {
+            document.getElementById('fileForm').style.display   = mode === 'file'   ? 'block' : 'none';
+            document.getElementById('folderForm').style.display = mode === 'folder' ? 'block' : 'none';
+        }
+
+        // Show which folder was picked
+        document.getElementById('folderUpload').addEventListener('change', function () {
+            if (this.files.length > 0) {
+                const folderPath = this.files[0].webkitRelativePath;
+                const folderName = folderPath.split('/')[0];
+                document.getElementById('folderName').textContent =
+                    '📁 ' + folderName + '  (' + this.files.length + ' files)';
+            }
+        });
+    </script>
 </body>
 </html>

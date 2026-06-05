@@ -29,7 +29,7 @@
 
         <div class="header">
             <h1>Uploaded Files</h1>
-            <p>All uploaded Files will show up here </p>
+            <p>All uploaded Files will show up here</p>
         </div>
 
         <table>
@@ -49,7 +49,14 @@
                     <td>{{ file['username'] }}</td>
                     <td>{{ file['file_name'] }}</td>
                     <td>{{ file['file_type'] }}</td>
-                    <td><a href="#" class="delete_btn">Delete</a></td>
+                    <td>
+                        <!-- POST form so delete can't be triggered by a stray GET -->
+                        <form action="/delete/{{ file['id'] }}" method="POST"
+                              onsubmit="return confirm('Are you sure you want to delete this file?');"
+                              style="display:inline;">
+                            <button type="submit" class="delete_btn">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
