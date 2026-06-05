@@ -3,10 +3,12 @@ body{
 }
 
 .box{
-    border: 3px solid black;
+    border: 3px solid black;   
+    width: 600px;
+    height: 350px;
+    margin: 50px auto;
     align-items: center;
     justify-items: center;
-    height: 300px;
 }
 
 .box_header{
